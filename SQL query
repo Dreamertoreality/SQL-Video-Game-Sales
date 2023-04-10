@@ -1,0 +1,156 @@
+/* 
+Created by: Afifah Azman
+On: 10th April 2023
+Description: Video Games Sales
+*/
+
+---------------------------------------------
+-- How many total global sales?
+-- Average?
+---------------------------------------------
+
+SELECT
+	round(sum(Global_Sales),2) AS 'Total Global Sales'
+FROM
+	vgsales
+	
+SELECT	
+	round(avg(global_sales),2) AS 'Average Global Sales'
+FROM
+	vgsales
+	
+	
+---------------------------------------------
+-- How many total sales based on country?
+-- Average? 
+---------------------------------------------
+
+SELECT
+	round(sum(NA_Sales),2) AS 'Total NA Sales',
+	round(sum(EU_Sales),2) AS 'Total EU Sales',
+	round(sum(JP_Sales),2) AS 'Total JP Sales',
+	round(sum(Other_Sales),2) AS 'Total Others Sales'
+FROM
+	vgsales
+
+SELECT
+	round(avg(NA_Sales),2) AS 'Total NA Sales',
+	round(avg(EU_Sales),2) AS 'Total EU Sales',
+	round(avg(JP_Sales),2) AS 'Total JP Sales',
+	round(avg(Other_Sales),2) AS 'Total Others Sales'
+FROM
+	vgsales
+	
+-----------------------------------------------
+-- Publisher with most sales in year 2006-2009?
+-----------------------------------------------
+
+SELECT
+	Publisher,
+	ROUND(sum(Global_Sales),2) AS 'Total Sales'
+FROM 
+	vgsales
+WHERE
+	Year >= '2006' AND Year <= '2009'
+group by
+	Publisher
+order by
+	sum(global_sales) DESC
+	
+----------------------------------------------------
+-- Publisher most sales and their most sales genre?
+----------------------------------------------------
+
+SELECT
+	Publisher,
+	Genre,
+	ROUND(sum(Global_Sales),2) AS 'Total Sales'
+FROM
+	vgsales
+WHERE
+	Publisher = 'Nintendo'
+GROUP BY
+	Genre
+ORDER by
+	sum(global_sales) DESC
+	
+----------------------------------------------------
+-- Bottom 3 least sales based on genre?
+----------------------------------------------------
+
+SELECT
+	Genre,
+	ROUND(sum(Global_Sales),2) AS 'Total Sales'
+FROM
+	vgsales
+GROUP by
+	Genre
+order by
+	sum(global_sales)
+LIMIT 3
+
+------------------------------------------------------------------------
+-- Number of video games sold less than average sales in Japan in 1999.
+------------------------------------------------------------------------
+
+SELECT
+	count(Name) as [Number of games sold],
+	Year
+FROM
+	vgsales
+WHERE
+JP_Sales <
+		(SELECT
+			round(avg(JP_Sales),2) AS 'Japan AVG Sales'
+		FROM
+			vgsales
+		WHERE
+			Year = '1999')
+AND
+	YEAR = '1999'
+
+	
+----------------------------------------------------------------------------------
+-- Assuming the expenses/cost is 25%, how much is the net profit for global sales?
+----------------------------------------------------------------------------------
+
+SELECT
+	Name,
+	round(Global_Sales*0.75,2) AS 'Net Profit'
+FROM
+	vgsales
+	
+----------------------------------------------------------------------------------
+-- How many unique platform were involve?
+----------------------------------------------------------------------------------
+
+SELECT
+	DISTINCT(Platform)
+FROM
+	vgsales
+	
+----------------------------------------------------------------------------------
+-- top 5 game with most sales?
+----------------------------------------------------------------------------------
+
+SELECT
+	Name,
+	Global_Sales
+FROM
+	vgsales
+ORDER by
+	Global_Sales DESC
+LIMIT 5
+
+
+----------------------------------------------------------------------------------
+-- how many unsold games in other_sales?
+----------------------------------------------------------------------------------
+
+SELECT
+	count(NAME),
+	Other_Sales
+FROM
+	vgsales
+WHERE
+	Other_Sales = '0'
